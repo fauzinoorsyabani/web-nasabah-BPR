@@ -57,6 +57,21 @@ $data = mysqli_query($conn, "SELECT * FROM nasabah $where ORDER BY id DESC");
     .main-content { margin-left: 220px; padding: 24px; }
     .card { border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
     .brand { color: #fff; font-weight: 700; font-size: 1.1rem; padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.15); }
+    
+    .print-header, .print-footer { display: none; }
+
+    /* Aturan tampilan khusus saat dicetak/print */
+    @media print {
+      .print-header { display: block !important; }
+      .print-footer { display: block !important; page-break-inside: avoid; }
+      .sidebar, form, .btn, .d-print-none, th:last-child, td:last-child, .alert, .page-title-normal { display: none !important; }
+      .main-content { margin-left: 0 !important; padding: 0 !important; }
+      .card { box-shadow: none !important; border: none !important; padding: 0 !important; }
+      body { background: #fff !important; color: #000 !important; }
+      table { border-color: #000 !important; }
+      th { background-color: #f8f9fa !important; border-bottom: 2px solid #000 !important; }
+      @page { margin: 1.5cm; }
+    }
   </style>
 </head>
 <body>
@@ -71,9 +86,12 @@ $data = mysqli_query($conn, "SELECT * FROM nasabah $where ORDER BY id DESC");
   </div>
 
   <div class="main-content">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 page-title-normal">
       <h5 class="fw-bold mb-0">Data Nasabah</h5>
-      <a href="tambah.php" class="btn btn-primary btn-sm">+ Tambah Nasabah</a>
+      <div>
+        <button onclick="window.print()" class="btn btn-secondary btn-sm me-1 d-print-none">Cetak Data</button>
+        <a href="tambah.php" class="btn btn-primary btn-sm d-print-none">+ Tambah Nasabah</a>
+      </div>
     </div>
 
     <?php if (isset($_GET['pesan'])): ?>
@@ -84,6 +102,18 @@ $data = mysqli_query($conn, "SELECT * FROM nasabah $where ORDER BY id DESC");
     <?php endif; ?>
 
     <div class="card p-3">
+      
+      <!-- Kop Surat untuk Print -->
+      <div class="print-header text-center mb-4">
+        <h4 class="fw-bold mb-1">PT. BPR MITRA KOPJAYA MANDIRI MANONJAYA</h4>
+        <p class="mb-0 small">Manonjaya</p>
+        <p class="mb-2 small">Telepon: (0265) XXXXXX | Email: cs@mitrakopjaya.co.id</p>
+        <hr style="border-top: 3px solid #000; opacity: 1;" class="mb-1">
+        <hr style="border-top: 1px solid #000; opacity: 1;" class="mt-0 mb-4">
+        <h5 class="fw-bold text-decoration-underline mb-3">LAPORAN DATA NASABAH</h5>
+        <div class="text-end small mb-2">Tanggal Cetak: <?= date('d M Y') ?></div>
+      </div>
+
       <!-- Form cari -->
       <form method="GET" class="d-flex gap-2 mb-3">
         <input type="text" name="cari" class="form-control form-control-sm" placeholder="Cari nama, rekening, atau NIK..." value="<?= htmlspecialchars($cari) ?>">
@@ -130,6 +160,14 @@ $data = mysqli_query($conn, "SELECT * FROM nasabah $where ORDER BY id DESC");
           <p class="text-center text-muted py-3">Tidak ada data nasabah ditemukan.</p>
         <?php endif; ?>
       </div>
+
+      <!-- TTD untuk Print -->
+      <div class="print-footer mt-5 text-end pe-4">
+        <p class="mb-5">Mengetahui,<br><b>Pimpinan BPR</b></p>
+        <p class="mb-0"><u>( ......................................... )</u></p>
+        <p class="mb-0">NIP. .........................</p>
+      </div>
+
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
